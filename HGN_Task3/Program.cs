@@ -1,4 +1,7 @@
 
+using HGN_Task3.Data;
+using HGN_Task3.Repositories;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.SemanticKernel;
 
 namespace HGN_Task3
@@ -12,6 +15,8 @@ namespace HGN_Task3
             // Add services to the container.
 
             builder.Services.AddControllers();
+            builder.Services.AddDbContext<AppDbContext>(option =>
+option.UseNpgsql(builder.Configuration.GetConnectionString("contextConnection")));
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSingleton<Kernel>(serviceProvider =>
@@ -31,6 +36,7 @@ namespace HGN_Task3
 
                 return kernelBuilder.Build();
             });
+           builder.Services.AddScoped<FlashcardRepository>();
             builder.Services.AddSwaggerGen();
 
             var app = builder.Build();
