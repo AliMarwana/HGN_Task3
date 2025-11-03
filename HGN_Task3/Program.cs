@@ -1,4 +1,6 @@
 
+using Microsoft.SemanticKernel;
+
 namespace HGN_Task3
 {
     public class Program
@@ -12,6 +14,23 @@ namespace HGN_Task3
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
+            builder.Services.AddSingleton<Kernel>(serviceProvider =>
+            {
+                var apiKey = builder.Configuration["Groq:ApiKey"]
+                           ?? throw new InvalidOperationException("Groq API Key not configured");
+
+                var modelId = builder.Configuration["Groq:ModelId"] ?? "llama-3.1-8b-instant";
+                var baseUrl = builder.Configuration["Groq:BaseUrl"] ?? "https://api.groq.com/openai/v1/";
+
+                var kernelBuilder = Kernel.CreateBuilder();
+
+                kernelBuilder.AddOpenAIChatCompletion(
+                    modelId: modelId,
+                    apiKey: apiKey,
+                    httpClient: new HttpClient { BaseAddress = new Uri(baseUrl) });
+
+                return kernelBuilder.Build();
+            });
             builder.Services.AddSwaggerGen();
 
             var app = builder.Build();
