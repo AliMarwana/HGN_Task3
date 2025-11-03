@@ -37,6 +37,7 @@ option.UseNpgsql(builder.Configuration.GetConnectionString("contextConnection"))
                 return kernelBuilder.Build();
             });
            builder.Services.AddScoped<FlashcardRepository>();
+           builder.Services.AddScoped<UserRepository>();
             builder.Services.AddSwaggerGen();
 
             var app = builder.Build();

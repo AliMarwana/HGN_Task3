@@ -2,6 +2,7 @@
 using HGN_Task3.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -10,9 +11,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace HGN_Task3.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251103135453_gznza")]
+    partial class gznza
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -65,10 +68,7 @@ namespace HGN_Task3.Migrations
                     b.Property<string>("DisplayName")
                         .HasColumnType("text");
 
-                    b.Property<string>("Title")
-                        .HasColumnType("text");
-
-                    b.Property<int?>("UserId")
+                    b.Property<int>("UserId")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
@@ -76,6 +76,27 @@ namespace HGN_Task3.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("FlashcardsListModels");
+                });
+
+            modelBuilder.Entity("HGN_Task3.Models.FormerResponse", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("DisplayName")
+                        .HasColumnType("text");
+
+                    b.Property<int?>("FormerUserFullResponseId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FormerUserFullResponseId");
+
+                    b.ToTable("FormerResponse");
                 });
 
             modelBuilder.Entity("HGN_Task3.Models.User", b =>
@@ -92,7 +113,12 @@ namespace HGN_Task3.Migrations
                     b.Property<string>("Email")
                         .HasColumnType("text");
 
+                    b.Property<int?>("FormerResponseId")
+                        .HasColumnType("integer");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("FormerResponseId");
 
                     b.ToTable("Users");
                 });
@@ -132,11 +158,11 @@ namespace HGN_Task3.Migrations
                     b.Property<int?>("FlashcardId")
                         .HasColumnType("integer");
 
-                    b.Property<bool>("IsAnswerKnown")
-                        .HasColumnType("boolean");
-
                     b.Property<bool>("Success")
                         .HasColumnType("boolean");
+
+                    b.Property<string>("UserAnswer")
+                        .HasColumnType("text");
 
                     b.Property<int?>("UserFullResponseId")
                         .HasColumnType("integer");
@@ -176,26 +202,44 @@ namespace HGN_Task3.Migrations
 
             modelBuilder.Entity("HGN_Task3.Models.Flashcard", b =>
                 {
-                    b.HasOne("HGN_Task3.Models.FlashcardsListModel", "FlashcardsListModel")
+                    b.HasOne("HGN_Task3.Models.FlashcardsListModel", null)
                         .WithMany("Flashcards")
                         .HasForeignKey("FlashcardsListModelId");
-
-                    b.Navigation("FlashcardsListModel");
                 });
 
             modelBuilder.Entity("HGN_Task3.Models.FlashcardsListModel", b =>
                 {
                     b.HasOne("HGN_Task3.Models.User", "User")
-                        .WithMany("FlashcardsListModels")
-                        .HasForeignKey("UserId");
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("HGN_Task3.Models.FormerResponse", b =>
+                {
+                    b.HasOne("HGN_Task3.Models.UserFullResponse", "FormerUserFullResponse")
+                        .WithMany()
+                        .HasForeignKey("FormerUserFullResponseId");
+
+                    b.Navigation("FormerUserFullResponse");
+                });
+
+            modelBuilder.Entity("HGN_Task3.Models.User", b =>
+                {
+                    b.HasOne("HGN_Task3.Models.FormerResponse", "FormerResponse")
+                        .WithMany()
+                        .HasForeignKey("FormerResponseId");
+
+                    b.Navigation("FormerResponse");
                 });
 
             modelBuilder.Entity("HGN_Task3.Models.UserFullResponse", b =>
                 {
                     b.HasOne("HGN_Task3.Models.User", "User")
-                        .WithMany("UserFullResponses")
+                        .WithMany()
                         .HasForeignKey("UserId");
 
                     b.Navigation("User");
@@ -226,13 +270,6 @@ namespace HGN_Task3.Migrations
             modelBuilder.Entity("HGN_Task3.Models.FlashcardsListModel", b =>
                 {
                     b.Navigation("Flashcards");
-                });
-
-            modelBuilder.Entity("HGN_Task3.Models.User", b =>
-                {
-                    b.Navigation("FlashcardsListModels");
-
-                    b.Navigation("UserFullResponses");
                 });
 
             modelBuilder.Entity("HGN_Task3.Models.UserFullResponse", b =>

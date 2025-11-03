@@ -2,6 +2,7 @@
 using HGN_Task3.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -10,9 +11,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace HGN_Task3.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251103143141_GRAN")]
+    partial class GRAN
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -63,9 +66,6 @@ namespace HGN_Task3.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("DisplayName")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Title")
                         .HasColumnType("text");
 
                     b.Property<int?>("UserId")
@@ -132,11 +132,11 @@ namespace HGN_Task3.Migrations
                     b.Property<int?>("FlashcardId")
                         .HasColumnType("integer");
 
-                    b.Property<bool>("IsAnswerKnown")
-                        .HasColumnType("boolean");
-
                     b.Property<bool>("Success")
                         .HasColumnType("boolean");
+
+                    b.Property<string>("UserAnswer")
+                        .HasColumnType("text");
 
                     b.Property<int?>("UserFullResponseId")
                         .HasColumnType("integer");
@@ -176,11 +176,9 @@ namespace HGN_Task3.Migrations
 
             modelBuilder.Entity("HGN_Task3.Models.Flashcard", b =>
                 {
-                    b.HasOne("HGN_Task3.Models.FlashcardsListModel", "FlashcardsListModel")
+                    b.HasOne("HGN_Task3.Models.FlashcardsListModel", null)
                         .WithMany("Flashcards")
                         .HasForeignKey("FlashcardsListModelId");
-
-                    b.Navigation("FlashcardsListModel");
                 });
 
             modelBuilder.Entity("HGN_Task3.Models.FlashcardsListModel", b =>

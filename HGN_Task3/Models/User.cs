@@ -3,7 +3,10 @@
     public class User: BaseModel
     {
 
-        public FormerResponse? FormerResponse { get; set; }
+        public string? Email { get; set; }
+        //public FormerResponse? FormerResponse { get; set; }
+        public List<UserFullResponse>? UserFullResponses { get; set; }
+        public List<FlashcardsListModel>? FlashcardsListModels { get; set; }
 
     }
 }
